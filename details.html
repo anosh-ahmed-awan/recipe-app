@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe Details</title>
+  <link rel="stylesheet" href="recipe.css">
+</head>
+<body>
+      <header>
+    <nav style="height: 160px; background: linear-gradient(to right, #d57227, #e7b188);">
+      <h1  style="font-size: 60px;">Recipe App</h1>
+      <form>
+        
+        
+      </form>
+    </nav>
+  </header>
+  <main>
+    <div class="recipe-details-container"></div>
+  </main>
+
+  <script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+if (id) {
+  fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`)
+    .then(r => r.json())
+    .then(d => {
+      const m = d.meals[0];
+      const recipeContainer = document.querySelector(".recipe-details-container");
+
+      const img = document.createElement("img");
+      img.src = m.strMealThumb;
+      img.alt = m.strMeal;
+
+      const detailsDiv = document.createElement("div");
+      detailsDiv.classList.add("details");
+
+      const title = document.createElement("h3");
+      title.textContent = m.strMeal;
+
+      const fields = {
+        "Area": m.strArea,
+        "Category": m.strCategory,
+        "Instructions": m.strInstructions
+      };
+
+      detailsDiv.appendChild(title);
+      for (let label in fields) {
+        const p = document.createElement("p");
+        p.innerHTML = `<strong>${label}:</strong> ${fields[label]}`;
+        detailsDiv.appendChild(p);
+      }
+
+      recipeContainer.appendChild(img);
+      recipeContainer.appendChild(detailsDiv);
+    })
+    .catch(err => {
+      console.error(err);
+      document.querySelector(".recipe-details-container").innerHTML = "Failed to load recipe details.";
+    });
+}
+
+  </script>
+</body>
+</html>
